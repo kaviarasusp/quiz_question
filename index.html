@@ -1,0 +1,244 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <title>Assessment: Chemical Bonding</title>
+        <style>
+            :root {
+                --bg-main: #f1ede4;
+                --primary-navy: #2d2d44;
+                --accent-blue: #1a73e8;
+                --success: #1e8e3e;
+                --danger: #d93025;
+                --card-bg: #ffffff;
+                --text-dark: #202124;
+                --text-light: #5f6368;
+            }
+
+            body {
+                font-family: 'Inter', sans-serif;
+                background-color: var(--bg-main);
+                margin: 0;
+                display: flex;
+                flex-direction: column;
+                height: 100vh;
+                overflow: hidden;
+            }
+
+            /* STICKY HEADER */
+            .top-hud {
+                flex-shrink: 0;
+                padding: 15px 20px;
+                background: var(--primary-navy);
+                color: white;
+                z-index: 1000;
+            }
+
+            .quiz-title { text-align: center; font-size: 1rem; font-weight: 700; margin-bottom: 10px; }
+
+            .stats-row {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 8px;
+                max-width: 600px;
+                margin: 0 auto 10px;
+            }
+
+            .stat-box { text-align: center; padding: 5px; background: rgba(255, 255, 255, 0.1); border-radius: 6px; }
+            .stat-label { font-size: 0.6rem; color: #ccc; text-transform: uppercase; display: block; }
+            .stat-num { font-size: 0.9rem; font-weight: 700; }
+
+            .nav-grid {
+                display: flex;
+                gap: 6px;
+                overflow-x: auto;
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 5px 0;
+                scrollbar-width: none;
+            }
+            .nav-grid::-webkit-scrollbar { display: none; }
+
+            .nav-item {
+                flex: 0 0 32px; height: 32px; border-radius: 4px;
+                background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.3);
+                display: flex; align-items: center; justify-content: center;
+                cursor: pointer; font-size: 0.8rem; transition: 0.2s;
+            }
+            .nav-item.active { border: 2px solid white; }
+            .nav-item.correct { background: var(--success); border: none; color: white; }
+            .nav-item.wrong { background: var(--danger); border: none; color: white; }
+
+            /* QUESTION AREA */
+            .content-area {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 15px;
+                overflow-y: auto;
+            }
+
+            .q-card {
+                background: var(--card-bg);
+                border-radius: 12px;
+                padding: 25px;
+                width: 100%;
+                max-width: 600px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+                display: none;
+                flex-direction: column;
+                max-height: 90%;
+            }
+            .q-card.active { display: flex; }
+
+            .q-tag { color: var(--accent-blue); font-weight: 600; font-size: 0.8rem; margin-bottom: 5px; }
+            .q-text { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; }
+
+            .opt-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 5px; }
+            .opt-btn {
+                padding: 12px 15px; border: 1.5px solid #e0e0e0; border-radius: 10px;
+                background: transparent; cursor: pointer; font-size: 1rem; text-align: left;
+            }
+            .opt-btn:hover:not(.disabled) { border-color: var(--primary-navy); background: #f8f9fa; }
+            .opt-btn.correct-choice { background: #e6f4ea; border-color: var(--success); color: var(--success); font-weight: bold; }
+            .opt-btn.wrong-choice { background: #fce8e6; border-color: var(--danger); color: var(--danger); }
+            .opt-btn.reveal-correct { border-color: var(--success); color: var(--success); }
+            .opt-btn.disabled { pointer-events: none; }
+
+            /* FOOTER NAVIGATION - SINGLE VIEW ALIGNMENT */
+            .footer-nav {
+                margin-top: 20px;
+                padding-top: 15px;
+                border-top: 1px solid #eee;
+                display: flex;
+                flex-direction: row; /* Forces horizontal alignment  */
+                justify-content: space-between;
+                gap: 15px;
+            }
+
+            .btn-action {
+                flex: 1; /* Ensures buttons share space equally  */
+                background: var(--primary-navy);
+                color: white;
+                border: none;
+                padding: 12px 0;
+                border-radius: 8px;
+                font-weight: bold;
+                cursor: pointer;
+                text-align: center;
+            }
+            .btn-action:disabled { background: #ccc; cursor: not-allowed; }
+        </style>
+    </head>
+    <body>
+        <div class="top-hud">
+            <div class="quiz-title">Chemistry: Chemical Bonding</div>
+            <div class="stats-row">
+                <div class="stat-box"><span class="stat-label">Acc.</span><span class="stat-num" id="h-acc">0%</span></div>
+                <div class="stat-box"><span class="stat-label">Cor.</span><span class="stat-num" id="h-cor">0</span></div>
+                <div class="stat-box"><span class="stat-label">Wro.</span><span class="stat-num" id="h-wro">0</span></div>
+                <div class="stat-box"><span class="stat-label">Rem.</span><span class="stat-num" id="h-rem">10</span></div>
+            </div>
+            <div class="nav-grid" id="nav-grid"></div>
+        </div>
+
+        <div class="content-area">
+            <div id="quiz-mount" style="width: 100%; display: flex; justify-content: center;"></div>
+        </div>
+
+        <script>
+            const quizData = [{"q": "1. What is a Chemical Bond?", "options": ["The repulsive force that holds atoms together", "The neutral force that holds atoms together", "The attractive force that holds atoms together", "The magnetic force that holds atoms together"], "correct": 2}, {"q": "Which of the following is NOT a property of Ionic Compounds?", "options": ["Soluble in water", "High melting and boiling points", "Poor conductivity in solid state", "Made up of molecules"], "correct": 3}, {"q": "In the formation of the Sodium Chloride crystal, sodium atom...", "options": ["Gains one electron", "Loses one electron", "Gains one proton", "Loses one proton"], "correct": 1}, {"q": "What type of bond is formed when carbon and oxygen combine to form carbon dioxide?", "options": ["Ionic bond", "Covalent bond", "Metallic bond", "Hydrogen bond"], "correct": 1}, {"q": "Why do metals have a high thermal and electrical conductivity?", "options": ["Because of the stationary cations", "Because of the immobile electrons", "Because of the mobile electrons", "Because of the stationary anions"], "correct": 2}, {"q": "What factor does NOT influence the type of bonding?", "options": ["Number of electrons in outermost shell", "Position of element in the periodic table", "Solubility of the compound", "The color of the compound"], "correct": 3}, {"q": "How many electrons are shared between two nitrogen atoms in a nitrogen molecule?", "options": ["1", "2", "4", "6"], "correct": 3}, {"q": "What term is given to the free-moving electrons in a metal?", "options": ["Ocean of electrons", "Stream of electrons", "Sea of electrons", "River of electrons"], "correct": 2}, {"q": "An Ionic bond is formed between ________.", "options": ["a metal and a non-metal", "two non-metals", "two metals", "a metal and a metalloid"], "correct": 0}, {"q": "Which of the following is a property of covalent compounds?", "options": ["They conduct electricity in the molten state", "They have high melting points", "They are usually gases or liquids at room temperature", "They are soluble in oil"], "correct": 2}];
+            let current = 0;
+            let correctTotal = 0;
+            let wrongTotal = 0;
+            const status = new Array(quizData.length).fill(null);
+
+            function init() {
+                const mount = document.getElementById('quiz-mount');
+                const grid = document.getElementById('nav-grid');
+
+                quizData.forEach((item, i) => {
+                    const card = document.createElement('div');
+                    card.className = `q-card ${i === 0 ? 'active' : ''}`;
+                    card.id = `q-card-${i}`;
+                    card.innerHTML = `
+                        <span class="q-tag">QUESTION ${i+1} OF ${quizData.length}</span>
+                        <div class="q-text">${item.q}</div>
+                        <div class="opt-list"></div>
+                        <div class="footer-nav">
+                            <button class="btn-action" ${i === 0 ? 'disabled' : ''} onclick="nav(-1)">Previous</button>
+                            <button class="btn-action" ${i === quizData.length - 1 ? 'disabled' : ''} onclick="nav(1)">Next</button>
+                        </div>
+                    `;
+
+                    const list = card.querySelector('.opt-list');
+                    item.options.forEach((opt, oIdx) => {
+                        const btn = document.createElement('div');
+                        btn.className = 'opt-btn';
+                        btn.innerText = opt;
+                        btn.onclick = () => handleChoice(i, oIdx, item.correct, btn, list);
+                        list.appendChild(btn);
+                    });
+                    mount.appendChild(card);
+
+                    const navBtn = document.createElement('div');
+                    navBtn.className = 'nav-item';
+                    navBtn.id = `nav-item-${i}`;
+                    navBtn.innerText = i + 1;
+                    navBtn.onclick = () => jumpTo(i);
+                    grid.appendChild(navBtn);
+                });
+                updateHUD();
+            }
+
+            function handleChoice(qIdx, selectedIdx, correctIdx, btn, parent) {
+                if (status[qIdx] !== null) return;
+                const options = parent.querySelectorAll('.opt-btn');
+                options.forEach(o => o.classList.add('disabled'));
+
+                if (selectedIdx === correctIdx) {
+                    btn.classList.add('correct-choice');
+                    correctTotal++;
+                    status[qIdx] = 1;
+                    document.getElementById(`nav-item-${qIdx}`).classList.add('correct');
+                } else {
+                    btn.classList.add('wrong-choice');
+                    options[correctIdx].classList.add('reveal-correct');
+                    wrongTotal++;
+                    status[qIdx] = 0;
+                    document.getElementById(`nav-item-${qIdx}`).classList.add('wrong');
+                }
+                updateHUD();
+            }
+
+            function jumpTo(idx) {
+                document.querySelector('.q-card.active').classList.remove('active');
+                current = idx;
+                document.getElementById(`q-card-${idx}`).classList.add('active');
+                updateHUD();
+            }
+
+            function nav(step) {
+                let target = current + step;
+                if (target >= 0 && target < quizData.length) jumpTo(target);
+            }
+
+            function updateHUD() {
+                const attended = correctTotal + wrongTotal;
+                const acc = attended === 0 ? 0 : Math.round((correctTotal / attended) * 100);
+                document.getElementById('h-acc').innerText = acc + '%';
+                document.getElementById('h-cor').innerText = correctTotal;
+                document.getElementById('h-wro').innerText = wrongTotal;
+                document.getElementById('h-rem').innerText = quizData.length - attended;
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                document.getElementById(`nav-item-${current}`).classList.add('active');
+            }
+
+            init();
+        </script>
+    </body>
+    </html>
+    
