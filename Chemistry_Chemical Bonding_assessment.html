@@ -7,8 +7,8 @@
         <title>Assessment: Chemical Bonding</title>
         <style>
             :root {
-                --bg-main: #f1ede4; /* Warm cream background from image */
-                --primary-navy: #2d2d44; /* Deep navy for headers and buttons */
+                --bg-main: #f1ede4;
+                --primary-navy: #2d2d44;
                 --accent-blue: #1a73e8;
                 --success: #1e8e3e;
                 --danger: #d93025;
@@ -18,9 +18,8 @@
             }
 
             body {
-                font-family: 'Inter', -apple-system, sans-serif;
+                font-family: 'Inter', sans-serif;
                 background-color: var(--bg-main);
-                color: var(--text-dark);
                 margin: 0;
                 display: flex;
                 flex-direction: column;
@@ -28,133 +27,108 @@
                 overflow: hidden;
             }
 
-            /* STICKY DASHBOARD */
+            /* STICKY HEADER */
             .top-hud {
-                padding: 20px;
+                flex-shrink: 0;
+                padding: 15px 20px;
                 background: var(--primary-navy);
                 color: white;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
                 z-index: 1000;
             }
 
-            .quiz-title {
-                text-align: center;
-                font-size: 1.1rem;
-                font-weight: 700;
-                margin-bottom: 15px;
-                letter-spacing: 0.5px;
-            }
+            .quiz-title { text-align: center; font-size: 1rem; font-weight: 700; margin-bottom: 10px; }
 
             .stats-row {
                 display: grid;
                 grid-template-columns: repeat(4, 1fr);
-                gap: 12px;
+                gap: 8px;
                 max-width: 600px;
-                margin: 0 auto 15px;
+                margin: 0 auto 10px;
             }
 
-            .stat-box {
-                text-align: center;
-                padding: 10px;
-                background: rgba(255, 255, 255, 0.1);
-                border-radius: 8px;
-            }
+            .stat-box { text-align: center; padding: 5px; background: rgba(255, 255, 255, 0.1); border-radius: 6px; }
+            .stat-label { font-size: 0.6rem; color: #ccc; text-transform: uppercase; display: block; }
+            .stat-num { font-size: 0.9rem; font-weight: 700; }
 
-            .stat-label { font-size: 0.65rem; color: #ccc; text-transform: uppercase; display: block; }
-            .stat-num { font-size: 1.1rem; font-weight: 700; }
-
-            /* NAV GRID SCROLLING */
             .nav-grid {
                 display: flex;
-                gap: 8px;
+                gap: 6px;
                 overflow-x: auto;
-                padding: 5px;
-                max-width: 800px;
+                max-width: 600px;
                 margin: 0 auto;
+                padding: 5px 0;
                 scrollbar-width: none;
             }
             .nav-grid::-webkit-scrollbar { display: none; }
 
             .nav-item {
-                flex: 0 0 35px;
-                height: 35px;
-                border-radius: 6px;
-                background: rgba(255, 255, 255, 0.2);
-                border: 1px solid rgba(255, 255, 255, 0.3);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                font-size: 0.85rem;
-                transition: 0.2s;
+                flex: 0 0 32px; height: 32px; border-radius: 4px;
+                background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.3);
+                display: flex; align-items: center; justify-content: center;
+                cursor: pointer; font-size: 0.8rem; transition: 0.2s;
             }
-
-            .nav-item.active { border: 2px solid white; font-weight: bold; }
+            .nav-item.active { border: 2px solid white; }
             .nav-item.correct { background: var(--success); border: none; color: white; }
             .nav-item.wrong { background: var(--danger); border: none; color: white; }
 
-            /* QUESTION INTERFACE */
+            /* QUESTION AREA */
             .content-area {
                 flex: 1;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                padding: 20px;
+                padding: 15px;
+                overflow-y: auto;
             }
 
             .q-card {
                 background: var(--card-bg);
-                border-radius: 16px;
-                padding: 35px;
+                border-radius: 12px;
+                padding: 25px;
                 width: 100%;
-                max-width: 650px;
+                max-width: 600px;
                 box-shadow: 0 2px 10px rgba(0,0,0,0.05);
                 display: none;
+                flex-direction: column;
+                max-height: 90%;
             }
+            .q-card.active { display: flex; }
 
-            .q-card.active { display: block; animation: fadeIn 0.3s ease; }
+            .q-tag { color: var(--accent-blue); font-weight: 600; font-size: 0.8rem; margin-bottom: 5px; }
+            .q-text { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; }
 
-            @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-            .q-tag { color: var(--accent-blue); font-weight: 600; font-size: 0.9rem; margin-bottom: 10px; display: block; }
-            .q-text { font-size: 1.4rem; font-weight: 600; line-height: 1.35; margin-bottom: 30px; }
-
-            .opt-list { display: flex; flex-direction: column; gap: 12px; }
+            .opt-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 5px; }
             .opt-btn {
-                padding: 16px;
-                border: 1.5px solid #e0e0e0;
-                border-radius: 12px;
-                background: transparent;
-                color: var(--text-dark);
-                cursor: pointer;
-                transition: 0.2s;
-                text-align: left;
-                font-size: 1.1rem;
+                padding: 12px 15px; border: 1.5px solid #e0e0e0; border-radius: 10px;
+                background: transparent; cursor: pointer; font-size: 1rem; text-align: left;
             }
-
             .opt-btn:hover:not(.disabled) { border-color: var(--primary-navy); background: #f8f9fa; }
             .opt-btn.correct-choice { background: #e6f4ea; border-color: var(--success); color: var(--success); font-weight: bold; }
             .opt-btn.wrong-choice { background: #fce8e6; border-color: var(--danger); color: var(--danger); }
             .opt-btn.reveal-correct { border-color: var(--success); color: var(--success); }
             .opt-btn.disabled { pointer-events: none; }
 
-            /* FOOTER */
+            /* FOOTER NAVIGATION - SINGLE VIEW ALIGNMENT */
             .footer-nav {
-                padding: 20px;
-                display: flex;
-                justify-content: space-between;
-                background: var(--card-bg);
+                margin-top: 20px;
+                padding-top: 15px;
                 border-top: 1px solid #eee;
+                display: flex;
+                flex-direction: row; /* Forces horizontal alignment  */
+                justify-content: space-between;
+                gap: 15px;
             }
 
             .btn-action {
+                flex: 1; /* Ensures buttons share space equally  */
                 background: var(--primary-navy);
                 color: white;
                 border: none;
-                padding: 12px 35px;
+                padding: 12px 0;
                 border-radius: 8px;
                 font-weight: bold;
                 cursor: pointer;
+                text-align: center;
             }
             .btn-action:disabled { background: #ccc; cursor: not-allowed; }
         </style>
@@ -163,25 +137,20 @@
         <div class="top-hud">
             <div class="quiz-title">Chemistry: Chemical Bonding</div>
             <div class="stats-row">
-                <div class="stat-box"><span class="stat-label">Accuracy</span><span class="stat-num" id="h-acc">0%</span></div>
-                <div class="stat-box"><span class="stat-label">Correct</span><span class="stat-num" id="h-cor">0</span></div>
-                <div class="stat-box"><span class="stat-label">Wrong</span><span class="stat-num" id="h-wro">0</span></div>
-                <div class="stat-box"><span class="stat-label">Left</span><span class="stat-num" id="h-rem">10</span></div>
+                <div class="stat-box"><span class="stat-label">Acc.</span><span class="stat-num" id="h-acc">0%</span></div>
+                <div class="stat-box"><span class="stat-label">Cor.</span><span class="stat-num" id="h-cor">0</span></div>
+                <div class="stat-box"><span class="stat-label">Wro.</span><span class="stat-num" id="h-wro">0</span></div>
+                <div class="stat-box"><span class="stat-label">Rem.</span><span class="stat-num" id="h-rem">10</span></div>
             </div>
             <div class="nav-grid" id="nav-grid"></div>
         </div>
 
         <div class="content-area">
-            <div id="quiz-mount"></div>
-        </div>
-
-        <div class="footer-nav">
-            <button class="btn-action" id="prev-btn" onclick="nav(-1)">Previous</button>
-            <button class="btn-action" id="next-btn" onclick="nav(1)">Next</button>
+            <div id="quiz-mount" style="width: 100%; display: flex; justify-content: center;"></div>
         </div>
 
         <script>
-            const quizData = [{"q": "1. Which of the following reasons best explains why atoms combine to form bonds?", "options": ["To increase their energy", "To reach the octet or duplet state", "To become less stable", "To reduce their atomic size"], "correct": 1}, {"q": "What type of bond is formed by the complete transfer of electrons from one atom to another?", "options": ["Covalent bond", "Ionic (Electrovalent) bond", "Metallic bond", "Co-ordinate bond"], "correct": 1}, {"q": "Which of the following properties is not generally associated with ionic compounds?", "options": ["High melting and boiling points", "Poor electrical conductivity in solid-state", "Existence as gases at room temperature", "Formation of crystalline solids"], "correct": 2}, {"q": "Metallic bonds confer which of the following properties to metals?", "options": ["Brittleness", "Poor electrical conductivity", "Malleability", "Inability to form alloys"], "correct": 2}, {"q": "What type of bond is formed when an atom donates a pair of electrons to be shared with another atom?", "options": ["Covalent bond", "Ionic bond", "Metallic bond", "Coordinate covalent bond"], "correct": 3}, {"q": "Which of the following best describes the concept of electronegativity?", "options": ["The energy required to remove an electron from an atom", "The tendency of an atom to attract shared electrons in a chemical bond", "The number of protons in an atom", "The charge associated with an atom"], "correct": 1}, {"q": "According to Pauling's electronegativity scale, which has the highest electronegativity?", "options": ["Helium", "Neon", "Fluorine", "Oxygen"], "correct": 2}, {"q": "What shape does the molecule of Methane (CH4) exhibit according to the VSEPR theory?", "options": ["Linear", "Bent", "Tetrahedral", "Trigonal Planar"], "correct": 2}, {"q": "Which bond forms the basis of the unique properties exhibited by Diamond and Graphite?", "options": ["Ionic bond", "Covalent bond", "Metallic bond", "Co-ordinate bond"], "correct": 1}, {"q": "The formation of ammonium ion (NH4+) involves which type of bond?", "options": ["Ionic bond", "Covalent bond", "Metallic bond", "Co-ordinate bond"], "correct": 3}];
+            const quizData = [{"q": "1. What is a Chemical Bond?", "options": ["The repulsive force that holds atoms together", "The neutral force that holds atoms together", "The attractive force that holds atoms together", "The magnetic force that holds atoms together"], "correct": 2}, {"q": "Which of the following is NOT a property of Ionic Compounds?", "options": ["Soluble in water", "High melting and boiling points", "Poor conductivity in solid state", "Made up of molecules"], "correct": 3}, {"q": "In the formation of the Sodium Chloride crystal, sodium atom...", "options": ["Gains one electron", "Loses one electron", "Gains one proton", "Loses one proton"], "correct": 1}, {"q": "What type of bond is formed when carbon and oxygen combine to form carbon dioxide?", "options": ["Ionic bond", "Covalent bond", "Metallic bond", "Hydrogen bond"], "correct": 1}, {"q": "Why do metals have a high thermal and electrical conductivity?", "options": ["Because of the stationary cations", "Because of the immobile electrons", "Because of the mobile electrons", "Because of the stationary anions"], "correct": 2}, {"q": "What factor does NOT influence the type of bonding?", "options": ["Number of electrons in outermost shell", "Position of element in the periodic table", "Solubility of the compound", "The color of the compound"], "correct": 3}, {"q": "How many electrons are shared between two nitrogen atoms in a nitrogen molecule?", "options": ["1", "2", "4", "6"], "correct": 3}, {"q": "What term is given to the free-moving electrons in a metal?", "options": ["Ocean of electrons", "Stream of electrons", "Sea of electrons", "River of electrons"], "correct": 2}, {"q": "An Ionic bond is formed between ________.", "options": ["a metal and a non-metal", "two non-metals", "two metals", "a metal and a metalloid"], "correct": 0}, {"q": "Which of the following is a property of covalent compounds?", "options": ["They conduct electricity in the molten state", "They have high melting points", "They are usually gases or liquids at room temperature", "They are soluble in oil"], "correct": 2}];
             let current = 0;
             let correctTotal = 0;
             let wrongTotal = 0;
@@ -199,6 +168,10 @@
                         <span class="q-tag">QUESTION ${i+1} OF ${quizData.length}</span>
                         <div class="q-text">${item.q}</div>
                         <div class="opt-list"></div>
+                        <div class="footer-nav">
+                            <button class="btn-action" ${i === 0 ? 'disabled' : ''} onclick="nav(-1)">Previous</button>
+                            <button class="btn-action" ${i === quizData.length - 1 ? 'disabled' : ''} onclick="nav(1)">Next</button>
+                        </div>
                     `;
 
                     const list = card.querySelector('.opt-list');
@@ -223,7 +196,6 @@
 
             function handleChoice(qIdx, selectedIdx, correctIdx, btn, parent) {
                 if (status[qIdx] !== null) return;
-
                 const options = parent.querySelectorAll('.opt-btn');
                 options.forEach(o => o.classList.add('disabled'));
 
@@ -257,17 +229,12 @@
             function updateHUD() {
                 const attended = correctTotal + wrongTotal;
                 const acc = attended === 0 ? 0 : Math.round((correctTotal / attended) * 100);
-
                 document.getElementById('h-acc').innerText = acc + '%';
                 document.getElementById('h-cor').innerText = correctTotal;
                 document.getElementById('h-wro').innerText = wrongTotal;
                 document.getElementById('h-rem').innerText = quizData.length - attended;
-
                 document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
                 document.getElementById(`nav-item-${current}`).classList.add('active');
-
-                document.getElementById('prev-btn').disabled = (current === 0);
-                document.getElementById('next-btn').disabled = (current === quizData.length - 1);
             }
 
             init();
