@@ -1,0 +1,277 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <title>Assessment: Chemical Bonding</title>
+        <style>
+            :root {
+                --bg-main: #f1ede4; /* Warm cream background from image */
+                --primary-navy: #2d2d44; /* Deep navy for headers and buttons */
+                --accent-blue: #1a73e8;
+                --success: #1e8e3e;
+                --danger: #d93025;
+                --card-bg: #ffffff;
+                --text-dark: #202124;
+                --text-light: #5f6368;
+            }
+
+            body {
+                font-family: 'Inter', -apple-system, sans-serif;
+                background-color: var(--bg-main);
+                color: var(--text-dark);
+                margin: 0;
+                display: flex;
+                flex-direction: column;
+                height: 100vh;
+                overflow: hidden;
+            }
+
+            /* STICKY DASHBOARD */
+            .top-hud {
+                padding: 20px;
+                background: var(--primary-navy);
+                color: white;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                z-index: 1000;
+            }
+
+            .quiz-title {
+                text-align: center;
+                font-size: 1.1rem;
+                font-weight: 700;
+                margin-bottom: 15px;
+                letter-spacing: 0.5px;
+            }
+
+            .stats-row {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 12px;
+                max-width: 600px;
+                margin: 0 auto 15px;
+            }
+
+            .stat-box {
+                text-align: center;
+                padding: 10px;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 8px;
+            }
+
+            .stat-label { font-size: 0.65rem; color: #ccc; text-transform: uppercase; display: block; }
+            .stat-num { font-size: 1.1rem; font-weight: 700; }
+
+            /* NAV GRID SCROLLING */
+            .nav-grid {
+                display: flex;
+                gap: 8px;
+                overflow-x: auto;
+                padding: 5px;
+                max-width: 800px;
+                margin: 0 auto;
+                scrollbar-width: none;
+            }
+            .nav-grid::-webkit-scrollbar { display: none; }
+
+            .nav-item {
+                flex: 0 0 35px;
+                height: 35px;
+                border-radius: 6px;
+                background: rgba(255, 255, 255, 0.2);
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                font-size: 0.85rem;
+                transition: 0.2s;
+            }
+
+            .nav-item.active { border: 2px solid white; font-weight: bold; }
+            .nav-item.correct { background: var(--success); border: none; color: white; }
+            .nav-item.wrong { background: var(--danger); border: none; color: white; }
+
+            /* QUESTION INTERFACE */
+            .content-area {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+            }
+
+            .q-card {
+                background: var(--card-bg);
+                border-radius: 16px;
+                padding: 35px;
+                width: 100%;
+                max-width: 650px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+                display: none;
+            }
+
+            .q-card.active { display: block; animation: fadeIn 0.3s ease; }
+
+            @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+            .q-tag { color: var(--accent-blue); font-weight: 600; font-size: 0.9rem; margin-bottom: 10px; display: block; }
+            .q-text { font-size: 1.4rem; font-weight: 600; line-height: 1.35; margin-bottom: 30px; }
+
+            .opt-list { display: flex; flex-direction: column; gap: 12px; }
+            .opt-btn {
+                padding: 16px;
+                border: 1.5px solid #e0e0e0;
+                border-radius: 12px;
+                background: transparent;
+                color: var(--text-dark);
+                cursor: pointer;
+                transition: 0.2s;
+                text-align: left;
+                font-size: 1.1rem;
+            }
+
+            .opt-btn:hover:not(.disabled) { border-color: var(--primary-navy); background: #f8f9fa; }
+            .opt-btn.correct-choice { background: #e6f4ea; border-color: var(--success); color: var(--success); font-weight: bold; }
+            .opt-btn.wrong-choice { background: #fce8e6; border-color: var(--danger); color: var(--danger); }
+            .opt-btn.reveal-correct { border-color: var(--success); color: var(--success); }
+            .opt-btn.disabled { pointer-events: none; }
+
+            /* FOOTER */
+            .footer-nav {
+                padding: 20px;
+                display: flex;
+                justify-content: space-between;
+                background: var(--card-bg);
+                border-top: 1px solid #eee;
+            }
+
+            .btn-action {
+                background: var(--primary-navy);
+                color: white;
+                border: none;
+                padding: 12px 35px;
+                border-radius: 8px;
+                font-weight: bold;
+                cursor: pointer;
+            }
+            .btn-action:disabled { background: #ccc; cursor: not-allowed; }
+        </style>
+    </head>
+    <body>
+        <div class="top-hud">
+            <div class="quiz-title">Chemistry: Chemical Bonding</div>
+            <div class="stats-row">
+                <div class="stat-box"><span class="stat-label">Accuracy</span><span class="stat-num" id="h-acc">0%</span></div>
+                <div class="stat-box"><span class="stat-label">Correct</span><span class="stat-num" id="h-cor">0</span></div>
+                <div class="stat-box"><span class="stat-label">Wrong</span><span class="stat-num" id="h-wro">0</span></div>
+                <div class="stat-box"><span class="stat-label">Left</span><span class="stat-num" id="h-rem">10</span></div>
+            </div>
+            <div class="nav-grid" id="nav-grid"></div>
+        </div>
+
+        <div class="content-area">
+            <div id="quiz-mount"></div>
+        </div>
+
+        <div class="footer-nav">
+            <button class="btn-action" id="prev-btn" onclick="nav(-1)">Previous</button>
+            <button class="btn-action" id="next-btn" onclick="nav(1)">Next</button>
+        </div>
+
+        <script>
+            const quizData = [{"q": "1. Which of the following reasons best explains why atoms combine to form bonds?", "options": ["To increase their energy", "To reach the octet or duplet state", "To become less stable", "To reduce their atomic size"], "correct": 1}, {"q": "What type of bond is formed by the complete transfer of electrons from one atom to another?", "options": ["Covalent bond", "Ionic (Electrovalent) bond", "Metallic bond", "Co-ordinate bond"], "correct": 1}, {"q": "Which of the following properties is not generally associated with ionic compounds?", "options": ["High melting and boiling points", "Poor electrical conductivity in solid-state", "Existence as gases at room temperature", "Formation of crystalline solids"], "correct": 2}, {"q": "Metallic bonds confer which of the following properties to metals?", "options": ["Brittleness", "Poor electrical conductivity", "Malleability", "Inability to form alloys"], "correct": 2}, {"q": "What type of bond is formed when an atom donates a pair of electrons to be shared with another atom?", "options": ["Covalent bond", "Ionic bond", "Metallic bond", "Coordinate covalent bond"], "correct": 3}, {"q": "Which of the following best describes the concept of electronegativity?", "options": ["The energy required to remove an electron from an atom", "The tendency of an atom to attract shared electrons in a chemical bond", "The number of protons in an atom", "The charge associated with an atom"], "correct": 1}, {"q": "According to Pauling's electronegativity scale, which has the highest electronegativity?", "options": ["Helium", "Neon", "Fluorine", "Oxygen"], "correct": 2}, {"q": "What shape does the molecule of Methane (CH4) exhibit according to the VSEPR theory?", "options": ["Linear", "Bent", "Tetrahedral", "Trigonal Planar"], "correct": 2}, {"q": "Which bond forms the basis of the unique properties exhibited by Diamond and Graphite?", "options": ["Ionic bond", "Covalent bond", "Metallic bond", "Co-ordinate bond"], "correct": 1}, {"q": "The formation of ammonium ion (NH4+) involves which type of bond?", "options": ["Ionic bond", "Covalent bond", "Metallic bond", "Co-ordinate bond"], "correct": 3}];
+            let current = 0;
+            let correctTotal = 0;
+            let wrongTotal = 0;
+            const status = new Array(quizData.length).fill(null);
+
+            function init() {
+                const mount = document.getElementById('quiz-mount');
+                const grid = document.getElementById('nav-grid');
+
+                quizData.forEach((item, i) => {
+                    const card = document.createElement('div');
+                    card.className = `q-card ${i === 0 ? 'active' : ''}`;
+                    card.id = `q-card-${i}`;
+                    card.innerHTML = `
+                        <span class="q-tag">QUESTION ${i+1} OF ${quizData.length}</span>
+                        <div class="q-text">${item.q}</div>
+                        <div class="opt-list"></div>
+                    `;
+
+                    const list = card.querySelector('.opt-list');
+                    item.options.forEach((opt, oIdx) => {
+                        const btn = document.createElement('div');
+                        btn.className = 'opt-btn';
+                        btn.innerText = opt;
+                        btn.onclick = () => handleChoice(i, oIdx, item.correct, btn, list);
+                        list.appendChild(btn);
+                    });
+                    mount.appendChild(card);
+
+                    const navBtn = document.createElement('div');
+                    navBtn.className = 'nav-item';
+                    navBtn.id = `nav-item-${i}`;
+                    navBtn.innerText = i + 1;
+                    navBtn.onclick = () => jumpTo(i);
+                    grid.appendChild(navBtn);
+                });
+                updateHUD();
+            }
+
+            function handleChoice(qIdx, selectedIdx, correctIdx, btn, parent) {
+                if (status[qIdx] !== null) return;
+
+                const options = parent.querySelectorAll('.opt-btn');
+                options.forEach(o => o.classList.add('disabled'));
+
+                if (selectedIdx === correctIdx) {
+                    btn.classList.add('correct-choice');
+                    correctTotal++;
+                    status[qIdx] = 1;
+                    document.getElementById(`nav-item-${qIdx}`).classList.add('correct');
+                } else {
+                    btn.classList.add('wrong-choice');
+                    options[correctIdx].classList.add('reveal-correct');
+                    wrongTotal++;
+                    status[qIdx] = 0;
+                    document.getElementById(`nav-item-${qIdx}`).classList.add('wrong');
+                }
+                updateHUD();
+            }
+
+            function jumpTo(idx) {
+                document.querySelector('.q-card.active').classList.remove('active');
+                current = idx;
+                document.getElementById(`q-card-${idx}`).classList.add('active');
+                updateHUD();
+            }
+
+            function nav(step) {
+                let target = current + step;
+                if (target >= 0 && target < quizData.length) jumpTo(target);
+            }
+
+            function updateHUD() {
+                const attended = correctTotal + wrongTotal;
+                const acc = attended === 0 ? 0 : Math.round((correctTotal / attended) * 100);
+
+                document.getElementById('h-acc').innerText = acc + '%';
+                document.getElementById('h-cor').innerText = correctTotal;
+                document.getElementById('h-wro').innerText = wrongTotal;
+                document.getElementById('h-rem').innerText = quizData.length - attended;
+
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                document.getElementById(`nav-item-${current}`).classList.add('active');
+
+                document.getElementById('prev-btn').disabled = (current === 0);
+                document.getElementById('next-btn').disabled = (current === quizData.length - 1);
+            }
+
+            init();
+        </script>
+    </body>
+    </html>
+    
