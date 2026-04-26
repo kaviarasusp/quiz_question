@@ -13,230 +13,129 @@
                 --success: #1e8e3e;
                 --danger: #d93025;
                 --card-bg: #ffffff;
-                --text-dark: #202124;
-                --text-light: #5f6368;
+            }
+            body { font-family: 'Inter', sans-serif; background-color: var(--bg-main); margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+            /* UPDATED HEADER: Flex-wrap allows dots to flow to new lines */
+            .top-hud { flex-shrink: 0; padding: 15px 20px; background: var(--primary-navy); color: white; z-index: 1000; }
+            .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; max-width: 600px; margin: 10px auto; }
+            .stat-box { text-align: center; padding: 5px; background: rgba(255,255,255,0.1); border-radius: 6px; }
+            .stat-num { font-size: 0.9rem; font-weight: bold; }
+
+            /* FIX: Changed display to flex-wrap to show all question numbers */
+            .nav-grid { 
+                display: flex; 
+                gap: 6px; 
+                flex-wrap: wrap; 
+                justify-content: center; 
+                max-width: 800px; 
+                margin: 0 auto; 
+                max-height: 80px; 
+                overflow-y: auto; 
+                padding: 5px;
             }
 
-            body {
-                font-family: 'Inter', sans-serif;
-                background-color: var(--bg-main);
-                margin: 0;
-                display: flex;
-                flex-direction: column;
-                height: 100vh;
-                overflow: hidden;
+            .nav-item { 
+                flex: 0 0 32px; 
+                height: 32px; 
+                border: 1px solid rgba(255,255,255,0.3); 
+                border-radius: 4px; 
+                display: flex; 
+                align-items: center; 
+                justify-content: center; 
+                cursor: pointer; 
+                font-size: 0.8rem; 
             }
-
-            /* STICKY HEADER */
-            .top-hud {
-                flex-shrink: 0;
-                padding: 15px 20px;
-                background: var(--primary-navy);
-                color: white;
-                z-index: 1000;
-            }
-
-            .quiz-title { text-align: center; font-size: 1rem; font-weight: 700; margin-bottom: 10px; }
-
-            .stats-row {
-                display: grid;
-                grid-template-columns: repeat(4, 1fr);
-                gap: 8px;
-                max-width: 600px;
-                margin: 0 auto 10px;
-            }
-
-            .stat-box { text-align: center; padding: 5px; background: rgba(255, 255, 255, 0.1); border-radius: 6px; }
-            .stat-label { font-size: 0.6rem; color: #ccc; text-transform: uppercase; display: block; }
-            .stat-num { font-size: 0.9rem; font-weight: 700; }
-
-            .nav-grid {
-                display: flex;
-                gap: 6px;
-                overflow-x: auto;
-                max-width: 600px;
-                margin: 0 auto;
-                padding: 5px 0;
-                scrollbar-width: none;
-            }
-            .nav-grid::-webkit-scrollbar { display: none; }
-
-            .nav-item {
-                flex: 0 0 32px; height: 32px; border-radius: 4px;
-                background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.3);
-                display: flex; align-items: center; justify-content: center;
-                cursor: pointer; font-size: 0.8rem; transition: 0.2s;
-            }
-            .nav-item.active { border: 2px solid white; }
+            .nav-item.active { border: 2px solid white; font-weight: bold; }
             .nav-item.correct { background: var(--success); border: none; color: white; }
             .nav-item.wrong { background: var(--danger); border: none; color: white; }
 
-            /* QUESTION AREA */
-            .content-area {
-                flex: 1;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding: 15px;
-                overflow-y: auto;
-            }
-
-            .q-card {
-                background: var(--card-bg);
-                border-radius: 12px;
-                padding: 25px;
-                width: 100%;
-                max-width: 600px;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-                display: none;
-                flex-direction: column;
-                max-height: 90%;
-            }
+            .content-area { flex: 1; display: flex; align-items: center; justify-content: center; padding: 15px; overflow-y: auto; }
+            .q-card { background: var(--card-bg); border-radius: 12px; padding: 25px; width: 100%; max-width: 600px; display: none; flex-direction: column; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
             .q-card.active { display: flex; }
-
-            .q-tag { color: var(--accent-blue); font-weight: 600; font-size: 0.8rem; margin-bottom: 5px; }
-            .q-text { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; }
-
-            .opt-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 5px; }
-            .opt-btn {
-                padding: 12px 15px; border: 1.5px solid #e0e0e0; border-radius: 10px;
-                background: transparent; cursor: pointer; font-size: 1rem; text-align: left;
-            }
-            .opt-btn:hover:not(.disabled) { border-color: var(--primary-navy); background: #f8f9fa; }
+            .opt-btn { padding: 12px; border: 1.5px solid #e0e0e0; border-radius: 10px; margin-top: 10px; cursor: pointer; text-align: left; }
             .opt-btn.correct-choice { background: #e6f4ea; border-color: var(--success); color: var(--success); font-weight: bold; }
             .opt-btn.wrong-choice { background: #fce8e6; border-color: var(--danger); color: var(--danger); }
-            .opt-btn.reveal-correct { border-color: var(--success); color: var(--success); }
-            .opt-btn.disabled { pointer-events: none; }
-
-            /* FOOTER NAVIGATION - SINGLE VIEW ALIGNMENT */
-            .footer-nav {
-                margin-top: 20px;
-                padding-top: 15px;
-                border-top: 1px solid #eee;
-                display: flex;
-                flex-direction: row; /* Forces horizontal alignment  */
-                justify-content: space-between;
-                gap: 15px;
-            }
-
-            .btn-action {
-                flex: 1; /* Ensures buttons share space equally  */
-                background: var(--primary-navy);
-                color: white;
-                border: none;
-                padding: 12px 0;
-                border-radius: 8px;
-                font-weight: bold;
-                cursor: pointer;
-                text-align: center;
-            }
-            .btn-action:disabled { background: #ccc; cursor: not-allowed; }
+            .footer-nav { margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee; display: flex; flex-direction: row; justify-content: space-between; gap: 15px; }
+            .btn-action { flex: 1; background: var(--primary-navy); color: white; border: none; padding: 12px 0; border-radius: 8px; cursor: pointer; font-weight: bold; }
+            .btn-action:disabled { background: #ccc; }
         </style>
     </head>
     <body>
         <div class="top-hud">
-            <div class="quiz-title">Chemistry: Chemical Bonding</div>
+            <div style="text-align:center; font-weight:bold;">Chemistry: Chemical Bonding</div>
             <div class="stats-row">
-                <div class="stat-box"><span class="stat-label">Acc.</span><span class="stat-num" id="h-acc">0%</span></div>
-                <div class="stat-box"><span class="stat-label">Cor.</span><span class="stat-num" id="h-cor">0</span></div>
-                <div class="stat-box"><span class="stat-label">Wro.</span><span class="stat-num" id="h-wro">0</span></div>
-                <div class="stat-box"><span class="stat-label">Rem.</span><span class="stat-num" id="h-rem">10</span></div>
+                <div class="stat-box">Acc: <span id="h-acc">0%</span></div>
+                <div class="stat-box">Cor: <span id="h-cor">0</span></div>
+                <div class="stat-box">Wro: <span id="h-wro">0</span></div>
+                <div class="stat-box">Rem: <span id="h-rem">25</span></div>
             </div>
             <div class="nav-grid" id="nav-grid"></div>
         </div>
-
-        <div class="content-area">
-            <div id="quiz-mount" style="width: 100%; display: flex; justify-content: center;"></div>
-        </div>
-
+        <div class="content-area"><div id="quiz-mount" style="width:100%; display:flex; justify-content:center;"></div></div>
         <script>
-            const quizData = [{"q": "1. What is a Chemical Bond?", "options": ["The repulsive force that holds atoms together", "The neutral force that holds atoms together", "The attractive force that holds atoms together", "The magnetic force that holds atoms together"], "correct": 2}, {"q": "Which of the following is NOT a property of Ionic Compounds?", "options": ["Soluble in water", "High melting and boiling points", "Poor conductivity in solid state", "Made up of molecules"], "correct": 3}, {"q": "In the formation of the Sodium Chloride crystal, sodium atom...", "options": ["Gains one electron", "Loses one electron", "Gains one proton", "Loses one proton"], "correct": 1}, {"q": "What type of bond is formed when carbon and oxygen combine to form carbon dioxide?", "options": ["Ionic bond", "Covalent bond", "Metallic bond", "Hydrogen bond"], "correct": 1}, {"q": "Why do metals have a high thermal and electrical conductivity?", "options": ["Because of the stationary cations", "Because of the immobile electrons", "Because of the mobile electrons", "Because of the stationary anions"], "correct": 2}, {"q": "What factor does NOT influence the type of bonding?", "options": ["Number of electrons in outermost shell", "Position of element in the periodic table", "Solubility of the compound", "The color of the compound"], "correct": 3}, {"q": "How many electrons are shared between two nitrogen atoms in a nitrogen molecule?", "options": ["1", "2", "4", "6"], "correct": 3}, {"q": "What term is given to the free-moving electrons in a metal?", "options": ["Ocean of electrons", "Stream of electrons", "Sea of electrons", "River of electrons"], "correct": 2}, {"q": "An Ionic bond is formed between ________.", "options": ["a metal and a non-metal", "two non-metals", "two metals", "a metal and a metalloid"], "correct": 0}, {"q": "Which of the following is a property of covalent compounds?", "options": ["They conduct electricity in the molten state", "They have high melting points", "They are usually gases or liquids at room temperature", "They are soluble in oil"], "correct": 2}];
-            let current = 0;
-            let correctTotal = 0;
-            let wrongTotal = 0;
+            const quizData = [{"q": "What is a Chemical Bond?", "options": ["Force that combines two or more atoms", "Force that separates two or more atoms", "A physical bond between two atoms", "None of the above"], "correct": 0}, {"q": "In Ionic bonding, the bond is formed by?", "options": ["Sharing of Electrons", "Transfer of Electrons", "Distribution of Electrons", "None of the above"], "correct": 1}, {"q": "The noble gas configuration is mimicked often due to?", "options": ["Stability of the configuration", "Reactivity of the configuration", "Both A and B", "None of the above"], "correct": 0}, {"q": "Covalent bonds occur when atoms ____", "options": ["donate electrons", "receive electrons", "share electrons", "none of the above"], "correct": 2}, {"q": "What is Electronegativity?", "options": ["An atom's power to lose a bonding pair of electrons", "An atom's power in a molecule to attract a bonding pair of electrons towards itself", "An atom's power to gain more protons", "None of the above"], "correct": 1}, {"q": "Boron does not follow the Octet rule. How many electrons does it have in its outer shell?", "options": ["2", "4", "6", "8"], "correct": 2}, {"q": "How are Lewis Dot Structures represented?", "options": ["Graphic representation of the arrangement of valence protons around atoms", "Graphic representation showing the arrangement of valence electrons around atoms", "Graphic representation of the arrangement of neutrons around atoms", "None of the above"], "correct": 1}, {"q": "What is Resonance in terms of Lewis Structures?", "options": ["A situation where no Lewis structure can represent a molecule", "A situation where more than one Lewis structure can represent a molecule", "Both A and B", "None of the above"], "correct": 1}, {"q": "Which force contributes to the stability of a molecule?", "options": ["Chemical Bonding", "Physical Bonding", "Both A and B", "None of the above"], "correct": 0}, {"q": "What type of bond forms when a metal atom donates one or more electrons to a non-metal atom?", "options": ["Covalent Bond", "Ionic Bond", "Both A and B", "None of the above"], "correct": 1}, {"q": "How can the uneven distribution of electrons in a molecule be described?", "options": ["Electronegativity", "Polarity", "Both A and B", "None of the above"], "correct": 1}, {"q": "What does the Octet rule imply?", "options": ["Atoms are stable when their outer shell comprises eight electrons", "Atoms are stable when their outer shell comprises four electrons", "Atoms are stable when their outer shell comprises two electrons", "None of the above"], "correct": 0}, {"q": "Which is not a form of intermolecular force?", "options": ["London dispersion forces", "Dipole-dipole interaction", "Hydrogen bonding", "Ionic bonding"], "correct": 3}, {"q": "Why does hydrogen bond occur?", "options": ["Due to its immense size", "Due to its small size and high electronegativity", "Due to its high size and low electronegativity", "None of the above"], "correct": 1}, {"q": "In an ionic bond, a metal atom acts as a(n) ___.", "options": ["proton acceptor", "proton donor", "electron acceptor", "electron donor"], "correct": 3}, {"q": "What is a polar covalent bond?", "options": ["Bond where electrons are equally shared", "Bond where electrons are unequally shared", "Bond where electrons are completely transferred", "None of the above"], "correct": 1}, {"q": "Why does Hydrogen have only two electrons in its outer shell?", "options": ["Due to its small size", "Due to its high electronegativity", "Due to the fact that it mimics the stable configuration of helium", "None of the above"], "correct": 2}, {"q": "Is it possible for a single molecule to have more than one valid Lewis Dot Structure?", "options": ["Yes, this is referred to as Resonance", "No, this is not possible", "Yes, this is referred to as Polarity", "None of the above"], "correct": 0}, {"q": "What is the weakest intermolecular force?", "options": ["Hydrogen bonding", "Ionic Bonding", "Dipole-dipole interaction", "London dispersion forces"], "correct": 3}, {"q": "How does a chemical bond result in a decrease in potential energy?", "options": ["By increasing the system's stability", "By decreasing the system's stability", "Both A and B", "None of the above"], "correct": 0}, {"q": "What is the role of electrons in an ionic bond?", "options": ["They are shared between atoms", "They are completely transferred from one atom to another", "They do not play a role in an ionic bond", "They are not present in an ionic bond"], "correct": 1}, {"q": "What is the major factor used to determine the type of bond (ionic or covalent)?", "options": ["The size of the atoms", "The charge of the atoms", "The difference in electronegativity", "The orientation of the molecules"], "correct": 2}, {"q": "What force is responsible for changes in the electron cloud distribution?", "options": ["Nuclear force", "Physical force", "Magnetic force", "Chemical bond"], "correct": 3}, {"q": "Who invented the concept of electronegativity?", "options": ["Ernest Rutherford", "Neil Bohr", "Linus Pauling", "JJ Thompson"], "correct": 2}, {"q": "What determines the polarity of a molecule?", "options": ["The orientation of the molecule", "The difference in electronegativity", "The equal sharing of electrons", "The number of electrons"], "correct": 1}];
+            let current = 0, correctTotal = 0, wrongTotal = 0;
             const status = new Array(quizData.length).fill(null);
 
             function init() {
-                const mount = document.getElementById('quiz-mount');
-                const grid = document.getElementById('nav-grid');
-
+                const mount = document.getElementById('quiz-mount'), grid = document.getElementById('nav-grid');
                 quizData.forEach((item, i) => {
                     const card = document.createElement('div');
                     card.className = `q-card ${i === 0 ? 'active' : ''}`;
                     card.id = `q-card-${i}`;
                     card.innerHTML = `
-                        <span class="q-tag">QUESTION ${i+1} OF ${quizData.length}</span>
-                        <div class="q-text">${item.q}</div>
+                        <div style="color:var(--accent-blue); font-weight:bold;">QUESTION ${i+1} OF ${quizData.length}</div>
+                        <div style="font-size:1.2rem; margin:15px 0;">${item.q}</div>
                         <div class="opt-list"></div>
                         <div class="footer-nav">
                             <button class="btn-action" ${i === 0 ? 'disabled' : ''} onclick="nav(-1)">Previous</button>
                             <button class="btn-action" ${i === quizData.length - 1 ? 'disabled' : ''} onclick="nav(1)">Next</button>
                         </div>
                     `;
-
                     const list = card.querySelector('.opt-list');
                     item.options.forEach((opt, oIdx) => {
                         const btn = document.createElement('div');
                         btn.className = 'opt-btn';
                         btn.innerText = opt;
-                        btn.onclick = () => handleChoice(i, oIdx, item.correct, btn, list);
+                        btn.onclick = () => {
+                            if(status[i] !== null) return;
+                            const opts = list.querySelectorAll('.opt-btn');
+                            opts.forEach(o => o.style.pointerEvents = 'none');
+                            if(oIdx === item.correct) {
+                                btn.classList.add('correct-choice'); correctTotal++; status[i] = 1;
+                                document.getElementById(`nav-item-${i}`).classList.add('correct');
+                            } else {
+                                btn.classList.add('wrong-choice'); opts[item.correct].classList.add('correct-choice');
+                                wrongTotal++; status[i] = 0;
+                                document.getElementById(`nav-item-${i}`).classList.add('wrong');
+                            }
+                            updateHUD();
+                        };
                         list.appendChild(btn);
                     });
                     mount.appendChild(card);
-
                     const navBtn = document.createElement('div');
-                    navBtn.className = 'nav-item';
-                    navBtn.id = `nav-item-${i}`;
-                    navBtn.innerText = i + 1;
-                    navBtn.onclick = () => jumpTo(i);
-                    grid.appendChild(navBtn);
+                    navBtn.className = 'nav-item'; navBtn.id = `nav-item-${i}`; navBtn.innerText = i + 1;
+                    navBtn.onclick = () => jumpTo(i); grid.appendChild(navBtn);
                 });
                 updateHUD();
             }
-
-            function handleChoice(qIdx, selectedIdx, correctIdx, btn, parent) {
-                if (status[qIdx] !== null) return;
-                const options = parent.querySelectorAll('.opt-btn');
-                options.forEach(o => o.classList.add('disabled'));
-
-                if (selectedIdx === correctIdx) {
-                    btn.classList.add('correct-choice');
-                    correctTotal++;
-                    status[qIdx] = 1;
-                    document.getElementById(`nav-item-${qIdx}`).classList.add('correct');
-                } else {
-                    btn.classList.add('wrong-choice');
-                    options[correctIdx].classList.add('reveal-correct');
-                    wrongTotal++;
-                    status[qIdx] = 0;
-                    document.getElementById(`nav-item-${qIdx}`).classList.add('wrong');
-                }
-                updateHUD();
-            }
-
             function jumpTo(idx) {
                 document.querySelector('.q-card.active').classList.remove('active');
-                current = idx;
-                document.getElementById(`q-card-${idx}`).classList.add('active');
-                updateHUD();
+                current = idx; document.getElementById(`q-card-${idx}`).classList.add('active'); updateHUD();
             }
-
-            function nav(step) {
-                let target = current + step;
-                if (target >= 0 && target < quizData.length) jumpTo(target);
-            }
-
+            function nav(step) { let t = current + step; if(t >= 0 && t < quizData.length) jumpTo(t); }
             function updateHUD() {
-                const attended = correctTotal + wrongTotal;
-                const acc = attended === 0 ? 0 : Math.round((correctTotal / attended) * 100);
+                const att = correctTotal + wrongTotal;
+                const acc = att === 0 ? 0 : Math.round((correctTotal / att) * 100);
                 document.getElementById('h-acc').innerText = acc + '%';
                 document.getElementById('h-cor').innerText = correctTotal;
                 document.getElementById('h-wro').innerText = wrongTotal;
-                document.getElementById('h-rem').innerText = quizData.length - attended;
+                document.getElementById('h-rem').innerText = quizData.length - att;
                 document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
                 document.getElementById(`nav-item-${current}`).classList.add('active');
             }
-
             init();
         </script>
     </body>
